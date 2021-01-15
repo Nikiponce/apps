@@ -16,4 +16,4 @@
     - Elastic Search
     - Kibana
 # TODO
-    - Add Nginx log for kibana APM
+    - Add Nginx log for kibana

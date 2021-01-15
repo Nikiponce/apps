@@ -21,11 +21,11 @@ case "$1" in
             ;;
         "rabbitmq")
             echo "rabbitmq"
-            cd ./portainer; docker-compose up --build -d; echo 'rabbitmq started'
+            cd ./rabbitmq; docker-compose up --build -d; echo 'rabbitmq started'
             ;;
         "elastic")
             echo "elastic"
-            cd ./portainer; docker-compose up --build -d; echo 'elastic started'
+            cd ./elastic-search; docker-compose up --build -d; echo 'elastic started'
             ;;
 
         *)
