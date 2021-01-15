@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    expose:
+      - 9000
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    env_file:
+      - .env
+    networks:
+      - proxy
+
+volumes:
+  portainer_data:
+
+networks:
+  proxy:
+    external: true
