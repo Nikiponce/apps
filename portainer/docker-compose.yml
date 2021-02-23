@@ -3,18 +3,23 @@ version: '3.8'
 services:
   portainer:
     image: portainer/portainer
+    container_name: portainer
     command: -H unix:///var/run/docker.sock
     restart: always
-    expose:
-      - 9000
     ports:
-      - 9000:9000
+      - 9001:9000
       - 8000:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     env_file:
       - .env
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      VIRTUAL_PORT: ${VIRTUAL_PORT}
+      LETSENCRYPT_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      VIRTUAL_NETWORK: ${VIRTUAL_NETWORK}
     networks:
       - proxy
 

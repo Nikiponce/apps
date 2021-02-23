@@ -1,20 +1,19 @@
-version: '3.7'
+version: "3.7"
 services:
-  rabbitmq:
+  rabbit1:
     image: rabbitmq:3-management-alpine
     container_name: rabbitmq
-    volumes:
-        - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
-        - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-        - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
     env_file:
-        - .env
+      - .env
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 15672:15672
+      - 5672:5672
     networks:
       - proxy
+      - rabbitmq_net
 
 networks:
+  rabbitmq_net:
+    name: rabbitmq_net
   proxy:
     external: true

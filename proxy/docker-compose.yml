@@ -3,6 +3,7 @@ services:
     proxy:
         image: jwilder/nginx-proxy
         container_name: proxy
+        restart: always
         ports:
           - 80:80
           - 443:443
@@ -17,21 +18,25 @@ services:
             - proxy
         env_file:
             - .env
+        environment:
+            NGINX_PROXY_CONTAINER: ${NGINX_PROXY_CONTAINER}
+            DEFAULT_HOST: ${DEFAULT_HOST}
+            DHPARAM_GENERATION: "false"
         labels:
             - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
 
-    letsencrypt:
-        container_name: letsencrypt
-        image: jrcs/letsencrypt-nginx-proxy-companion
-        restart: always
-        env_file:
-            - .env
-        volumes:
-            - ./data/conf:/etc/nginx/conf.d
-            - ./data/vhost:/etc/nginx/vhost.d
-            - ./data/html:/usr/share/nginx/html
-            - ./data/certs:/etc/nginx/certs
-            - /var/run/docker.sock:/var/run/docker.sock:ro
+    # letsencrypt:
+    #     container_name: letsencrypt
+    #     image: jrcs/letsencrypt-nginx-proxy-companion
+    #     restart: always
+    #     env_file:
+    #         - .env
+    #     volumes:
+    #         - ./data/conf:/etc/nginx/conf.d
+    #         - ./data/vhost:/etc/nginx/vhost.d
+    #         - ./data/html:/usr/share/nginx/html
+    #         - ./data/certs:/etc/nginx/certs
+    #         - /var/run/docker.sock:/var/run/docker.sock:ro
 
 networks:
     proxy:
