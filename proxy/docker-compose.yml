@@ -1,42 +1,40 @@
 version: '3.8'
 services:
-    proxy:
-        image: jwilder/nginx-proxy
-        container_name: proxy
-        restart: always
-        ports:
-          - 80:80
-          - 443:443
-        volumes:
-          - /var/run/docker.sock:/tmp/docker.sock:ro
-          - ./data/conf:/etc/nginx/conf.d
-          - ./data/vhost:/etc/nginx/vhost.d
-          - ./data/html:/usr/share/nginx/html
-          - ./data/certs:/etc/nginx/certs
-        #   - ./data/fastcgi_params/fastcgi_params:/etc/nginx/fastcgi_params
-        networks:
-            - proxy
-        env_file:
-            - .env
-        environment:
-            NGINX_PROXY_CONTAINER: ${NGINX_PROXY_CONTAINER}
-            DEFAULT_HOST: ${DEFAULT_HOST}
-            DHPARAM_GENERATION: "false"
-        labels:
-            - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
 
-    # letsencrypt:
-    #     container_name: letsencrypt
-    #     image: jrcs/letsencrypt-nginx-proxy-companion
-    #     restart: always
-    #     env_file:
-    #         - .env
-    #     volumes:
-    #         - ./data/conf:/etc/nginx/conf.d
-    #         - ./data/vhost:/etc/nginx/vhost.d
-    #         - ./data/html:/usr/share/nginx/html
-    #         - ./data/certs:/etc/nginx/certs
-    #         - /var/run/docker.sock:/var/run/docker.sock:ro
+  traefik:
+    image: "traefik:v2.4"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=postmaster@example.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+        - proxy
+    volumes:
+    #   - ./traefik.toml:/traefik.toml
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`app.dev`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
 
 networks:
     proxy:

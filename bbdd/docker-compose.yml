@@ -20,10 +20,14 @@ services:
     restart: always
     env_file:
       - .env
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`phpmyadmin.app.dev`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
     ports:
-      - "8888:80"
-    expose:
-      - 8888
+      - 8888:80
     networks:
       - db_net
       - proxy
