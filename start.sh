@@ -3,8 +3,8 @@
 case "$1" in
         "all")
             echo "all"
-            cd ./proxy; docker-compose up --build -d; echo 'proxy started'
-            cd ./bbdd; docker-compose up --build -d; echo 'bbdd started'
+            cd ./proxy; docker-compose up --build -d; echo 'proxy started'; cd ..
+            cd ./bbdd; docker-compose up --build -d; echo 'bbdd started'; cd ..
             cd ./portainer; docker-compose up --build -d; echo 'portainer started'
             ;;
         "proxy")
